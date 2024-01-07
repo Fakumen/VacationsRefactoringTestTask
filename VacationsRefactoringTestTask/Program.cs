@@ -17,7 +17,7 @@ namespace PracticTask1
                 ["Павлов Павел Павлович"] = new List<DateTime>(),
                 ["Георгиев Георг Георгиевич"] = new List<DateTime>()
             };
-            var AviableWorkingDaysOfWeekWithoutWeekends = new List<>() { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday" };
+            var AviableWorkingDaysOfWeekWithoutWeekends = new List<string>() { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday" };
             // Список отпусков сотрудников
             List<DateTime> Vacations = new List<DateTime>();
             var AllVacationCount = 0;
@@ -29,20 +29,20 @@ namespace PracticTask1
                 Random step = new Random();
                 DateTime start = new DateTime(DateTime.Now.Year, 1, 1);
                 DateTime end = new DateTime(DateTime.Today.Year, 12, 31);
-                string workerName
+                string workerName;
                 dateList = VacationList.Value;
                 int vacationCount = 28;
                 while (vacationCount > 0)
                 {
                     int range = (end - start).Days;
-                    var startDate = start.addDays(gen.Next(range));
+                    var startDate = start.AddDays(gen.Next(range));
 
                     if (AviableWorkingDaysOfWeekWithoutWeekends.Contains(startDate.DayOfWeek.ToString()))
                     {
                         string[] vacationSteps = { "7", "14" };
                         int vacIndex = gen.Next(vacationSteps.Length);
                         var endDate = new DateTime(DateTime.Now.Year, 12, 31);
-                        float difference = 0;
+                        int difference = 0;
                         if (vacationSteps[vacIndex] == "7")
                         {
                             endDate = startDate.AddDays(7);
