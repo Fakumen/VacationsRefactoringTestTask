@@ -8,7 +8,7 @@ namespace PracticTask1
     {
         private static void Main(string[] args)
         {
-            var vacationDictionary = new Dictionary<string, List<DateTime>>()
+            var vacationsByEmployees = new Dictionary<string, List<DateTime>>()
             {
                 ["Иванов Иван Иванович"] = new(),
                 ["Петров Петр Петрович"] = new(),
@@ -18,46 +18,48 @@ namespace PracticTask1
                 ["Георгиев Георг Георгиевич"] = new()
             };
             // Список отпусков сотрудников
-            var vacations = new List<DateTime>();
-            foreach (var VacationList in vacationDictionary)
+            var allVacations = new List<DateTime>();
+
+            var gen = new Random();
+            var year = DateTime.Today.Year;
+            var firstDayOfYear = new DateTime(year, 1, 1);
+            var yearDaysRange = (DateTime.IsLeapYear(year) ? 366 : 365) - 1;
+            int[] vacationDurations = { 7, 14 };
+            var vacationCount = 28;
+
+            foreach (var employee in vacationsByEmployees.Keys)
             {
-                var gen = new Random();
-                var start = new DateTime(DateTime.Now.Year, 1, 1);
-                var end = new DateTime(DateTime.Today.Year, 12, 31);
-                var dateList = VacationList.Value;
-                var vacationCount = 28;
+                var employeeVacations = vacationsByEmployees[employee];
                 while (vacationCount > 0)
                 {
-                    int range = (end - start).Days;
-                    var startDate = start.AddDays(gen.Next(range));
+                    var startDate = firstDayOfYear.AddDays(gen.Next(yearDaysRange));
 
                     if (IsWorkingDay(startDate.DayOfWeek))
                     {
-                        int[] vacationSteps = { 7, 14 };
-                        var minVacationLength = vacationSteps.Min();
+                        var minVacationLength = vacationDurations.Min();
                         var vacationLength = vacationCount <= minVacationLength
                             ? minVacationLength
-                            : vacationSteps[gen.Next(vacationSteps.Length)];
+                            : vacationDurations[gen.Next(vacationDurations.Length)];
 
                         var endDate = startDate.AddDays(vacationLength);
 
-                        if (CanCreateVacation(startDate, endDate, dateList, vacations))
+                        if (CanCreateVacation(startDate, endDate, employeeVacations, allVacations))
                         {
                             for (var dt = startDate; dt < endDate; dt = dt.AddDays(1))
                             {
-                                vacations.Add(dt);
-                                dateList.Add(dt);
+                                allVacations.Add(dt);
+                                employeeVacations.Add(dt);
                             }
                             vacationCount -= vacationLength;
                         }
                     }
                 }
             }
-            foreach (var vacationList in vacationDictionary)
+            foreach (var employee in vacationsByEmployees.Keys)
             {
-                var setDateList = vacationList.Value;
-                Console.WriteLine("Дни отпуска " + vacationList.Key + " : ");
-                for (int i = 0; i < setDateList.Count; i++) { Console.WriteLine(setDateList[i]); }
+                Console.WriteLine($"Дни отпуска {employee} : ");
+                foreach (var date in vacationsByEmployees[employee]) 
+                    Console.WriteLine($"{date:d}"); 
             }
             Console.ReadKey();
         }
