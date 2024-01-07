@@ -35,26 +35,13 @@ namespace PracticTask1
 
                     if (workingDaysOfWeek.Contains(startDate.DayOfWeek.ToString()))
                     {
-                        string[] vacationSteps = { "7", "14" };
-                        var vacIndex = gen.Next(vacationSteps.Length);
-                        var endDate = new DateTime(DateTime.Now.Year, 12, 31);
-                        var difference = 0;
-                        if (vacationSteps[vacIndex] == "7")
-                        {
-                            endDate = startDate.AddDays(7);
-                            difference = 7;
-                        }
-                        if (vacationSteps[vacIndex] == "14")
-                        {
-                            endDate = startDate.AddDays(14);
-                            difference = 14;
-                        }
+                        int[] vacationSteps = { 7, 14 };
+                        var minVacationLength = vacationSteps.Min();
+                        var vacationLength = vacationCount <= minVacationLength
+                            ? minVacationLength
+                            : vacationSteps[gen.Next(vacationSteps.Length)];
 
-                        if (vacationCount <= 7)
-                        {
-                            endDate = startDate.AddDays(7);
-                            difference = 7;
-                        }
+                        var endDate = startDate.AddDays(vacationLength);
 
                         // Проверка условий по отпуску
                         var canCreateVacation = false;
@@ -78,7 +65,7 @@ namespace PracticTask1
                                 vacations.Add(dt);
                                 dateList.Add(dt);
                             }
-                            vacationCount -= difference;
+                            vacationCount -= vacationLength;
                         }
                     }
                 }
