@@ -83,7 +83,7 @@ namespace PracticTask1
                                 dateList.Add(dt);
                             }
                             AllVacationCount++;
-                            vacationCount -= vacationCount - difference;
+                            vacationCount -= difference;
                         }
                     }
                 }
