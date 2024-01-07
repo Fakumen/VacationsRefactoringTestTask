@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace PracticTask1
+namespace VacationsRefactoringTestTask
 {
     internal class Program
     {
         private static void Main(string[] args)
         {
-            var vacationsByEmployees = new Dictionary<string, List<DateTime>>()
+            var vacationsByEmployees = new Dictionary<string, List<DateInterval>>()
             {
                 ["Иванов Иван Иванович"] = new(),
                 ["Петров Петр Петрович"] = new(),
@@ -18,39 +18,38 @@ namespace PracticTask1
                 ["Георгиев Георг Георгиевич"] = new()
             };
             // Список отпусков сотрудников
-            var allVacations = new List<DateTime>();
+            var allVacations = new List<DateInterval>();
 
             var gen = new Random();
             var year = DateTime.Today.Year;
             var firstDayOfYear = new DateTime(year, 1, 1);
-            var yearDaysRange = (DateTime.IsLeapYear(year) ? 366 : 365) - 1;
-            int[] vacationDurations = { 7, 14 };
-            var vacationCount = 28;
+            var daysInYear = DateTime.IsLeapYear(year) ? 366 : 365;
+            int[] vacationDurations = { 7, 14 }; //Duration in days
+            var minVacationDuration = vacationDurations.Min();
+            var vacationDaysPerYear = 28;
 
             foreach (var employee in vacationsByEmployees.Keys)
             {
                 var employeeVacations = vacationsByEmployees[employee];
-                while (vacationCount > 0)
+                var vacationDaysLeft = vacationDaysPerYear;
+                while (vacationDaysLeft > 0)
                 {
-                    var startDate = firstDayOfYear.AddDays(gen.Next(yearDaysRange));
+                    var startDate = firstDayOfYear.AddDays(gen.Next(daysInYear - 1));
 
                     if (IsWorkingDay(startDate.DayOfWeek))
                     {
-                        var minVacationLength = vacationDurations.Min();
-                        var vacationLength = vacationCount <= minVacationLength
-                            ? minVacationLength
+                        var vacationDuration = vacationDaysLeft <= minVacationDuration
+                            ? minVacationDuration
                             : vacationDurations[gen.Next(vacationDurations.Length)];
 
-                        var endDate = startDate.AddDays(vacationLength);
+                        var endDate = startDate.AddDays(vacationDuration);
+                        var interval = new DateInterval(startDate, endDate);
 
-                        if (CanCreateVacation(startDate, endDate, employeeVacations, allVacations))
+                        if (CanCreateVacation(interval, employeeVacations, allVacations))
                         {
-                            for (var dt = startDate; dt < endDate; dt = dt.AddDays(1))
-                            {
-                                allVacations.Add(dt);
-                                employeeVacations.Add(dt);
-                            }
-                            vacationCount -= vacationLength;
+                            allVacations.Add(interval);
+                            employeeVacations.Add(interval);
+                            vacationDaysLeft -= vacationDuration;
                         }
                     }
                 }
@@ -58,34 +57,33 @@ namespace PracticTask1
             foreach (var employee in vacationsByEmployees.Keys)
             {
                 Console.WriteLine($"Дни отпуска {employee} : ");
-                foreach (var date in vacationsByEmployees[employee]) 
-                    Console.WriteLine($"{date:d}"); 
+                foreach (var vac in vacationsByEmployees[employee]) 
+                    Console.WriteLine($"{vac.Start:d} - {vac.End:d} ({vac.TimeSpan.Days})"); 
             }
             Console.ReadKey();
         }
 
         private static bool CanCreateVacation(
-                DateTime startDate, DateTime endDate,
-                List<DateTime> employeeVacationDays,
-                List<DateTime> allEmployeesVacationDays)
+            DateInterval vacationInterval,
+            List<DateInterval> employeeVacations,
+            List<DateInterval> allEmployeesVacations)
         {
-            var existStart = false;
-            var existEnd = false;
-            if (!allEmployeesVacationDays
-                .Any(element => element >= startDate && element <= endDate))
-            {
-                if (!allEmployeesVacationDays
-                    .Any(element => element.AddDays(3) >= startDate && element.AddDays(3) <= endDate))
-                {
-                    existStart = employeeVacationDays
-                        .Any(element => element.AddMonths(1) >= startDate && element.AddMonths(1) >= endDate);
-                    existEnd = employeeVacationDays
-                        .Any(element => element.AddMonths(-1) <= startDate && element.AddMonths(-1) <= endDate);
-                    if (!existStart || !existEnd)
-                        return true;
-                }
-            }
-            return false;
+            var vacationMonthCooldown = 1;//vacation cooldown = 1 month//Replace with 30 days TimeSpan
+            var vacationSafeExtent = 3;//days new TimeSpan(3, 0, 0, 0);
+
+            var safeInterval = new DateInterval(
+                vacationInterval.Start.AddDays(-vacationSafeExtent),
+                vacationInterval.End.AddDays(vacationSafeExtent));
+            if (allEmployeesVacations.Any(vac => vac.Intersects(safeInterval, true)))
+                return false;
+            var cooldownInterval = new DateInterval(
+                vacationInterval.Start.AddMonths(-vacationMonthCooldown),
+                vacationInterval.End.AddMonths(vacationMonthCooldown));
+            //Проверка дня через месяц может перескочить через отпускной
+            //Поэтому проверяется пересечение
+            if (employeeVacations.Any(vac => vac.Intersects(cooldownInterval, true)))
+                return false;
+            return true;
         }
 
         private static bool IsWorkingDay(DayOfWeek dayOfWeek)
