@@ -10,28 +10,29 @@ namespace PracticTask1
         {
             var VacationDictionary = new Dictionary<string, List<DateTime>>()
             {
-                ["Иванов Иван Иванович"] = new List<DateTime>(),
-                ["Петров Петр Петрович"] = new List<DateTime>(),
-                ["Юлина Юлия Юлиановна"] = new List<DateTime>(),
-                ["Сидоров Сидор Сидорович"] = new List<DateTime>(),
-                ["Павлов Павел Павлович"] = new List<DateTime>(),
-                ["Георгиев Георг Георгиевич"] = new List<DateTime>()
+                ["Иванов Иван Иванович"] = new(),
+                ["Петров Петр Петрович"] = new(),
+                ["Юлина Юлия Юлиановна"] = new(),
+                ["Сидоров Сидор Сидорович"] = new(),
+                ["Павлов Павел Павлович"] = new(),
+                ["Георгиев Георг Георгиевич"] = new()
             };
-            var AviableWorkingDaysOfWeekWithoutWeekends = new List<string>() { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday" };
+            var AviableWorkingDaysOfWeekWithoutWeekends 
+                = new List<string>() { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday" };
             // Список отпусков сотрудников
-            List<DateTime> Vacations = new List<DateTime>();
+            var Vacations = new List<DateTime>();
             var AllVacationCount = 0;
-            List<DateTime> dateList = new List<DateTime>();
-            List<DateTime> SetDateList = new List<DateTime>();
+            var dateList = new List<DateTime>();
+            var SetDateList = new List<DateTime>();
             foreach (var VacationList in VacationDictionary)
             {
-                Random gen = new Random();
-                Random step = new Random();
-                DateTime start = new DateTime(DateTime.Now.Year, 1, 1);
-                DateTime end = new DateTime(DateTime.Today.Year, 12, 31);
+                var gen = new Random();
+                var step = new Random();
+                var start = new DateTime(DateTime.Now.Year, 1, 1);
+                var end = new DateTime(DateTime.Today.Year, 12, 31);
                 string workerName;
                 dateList = VacationList.Value;
-                int vacationCount = 28;
+                var vacationCount = 28;
                 while (vacationCount > 0)
                 {
                     int range = (end - start).Days;
@@ -40,9 +41,9 @@ namespace PracticTask1
                     if (AviableWorkingDaysOfWeekWithoutWeekends.Contains(startDate.DayOfWeek.ToString()))
                     {
                         string[] vacationSteps = { "7", "14" };
-                        int vacIndex = gen.Next(vacationSteps.Length);
+                        var vacIndex = gen.Next(vacationSteps.Length);
                         var endDate = new DateTime(DateTime.Now.Year, 12, 31);
-                        int difference = 0;
+                        var difference = 0;
                         if (vacationSteps[vacIndex] == "7")
                         {
                             endDate = startDate.AddDays(7);
@@ -61,9 +62,9 @@ namespace PracticTask1
                         }
 
                         // Проверка условий по отпуску
-                        bool CanCreateVacation = false;
-                        bool existStart = false;
-                        bool existEnd = false;
+                        var CanCreateVacation = false;
+                        var existStart = false;
+                        var existEnd = false;
                         if (!Vacations.Any(element => element >= startDate && element <= endDate))
                         {
                             if (!Vacations.Any(element => element.AddDays(3) >= startDate && element.AddDays(3) <= endDate))
@@ -77,7 +78,7 @@ namespace PracticTask1
 
                         if (CanCreateVacation)
                         {
-                            for (DateTime dt = startDate; dt < endDate; dt = dt.AddDays(1))
+                            for (var dt = startDate; dt < endDate; dt = dt.AddDays(1))
                             {
                                 Vacations.Add(dt);
                                 dateList.Add(dt);
