@@ -8,7 +8,7 @@ namespace PracticTask1
     {
         static void Main(string[] args)
         {
-            var VacationDictionary = new Dictionary<string, List<DateTime>>()
+            var vacationDictionary = new Dictionary<string, List<DateTime>>()
             {
                 ["Иванов Иван Иванович"] = new(),
                 ["Петров Петр Петрович"] = new(),
@@ -17,28 +17,23 @@ namespace PracticTask1
                 ["Павлов Павел Павлович"] = new(),
                 ["Георгиев Георг Георгиевич"] = new()
             };
-            var AviableWorkingDaysOfWeekWithoutWeekends 
+            var workingDaysOfWeek 
                 = new List<string>() { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday" };
             // Список отпусков сотрудников
-            var Vacations = new List<DateTime>();
-            var AllVacationCount = 0;
-            var dateList = new List<DateTime>();
-            var SetDateList = new List<DateTime>();
-            foreach (var VacationList in VacationDictionary)
+            var vacations = new List<DateTime>();
+            foreach (var VacationList in vacationDictionary)
             {
                 var gen = new Random();
-                var step = new Random();
                 var start = new DateTime(DateTime.Now.Year, 1, 1);
                 var end = new DateTime(DateTime.Today.Year, 12, 31);
-                string workerName;
-                dateList = VacationList.Value;
+                var dateList = VacationList.Value;
                 var vacationCount = 28;
                 while (vacationCount > 0)
                 {
                     int range = (end - start).Days;
                     var startDate = start.AddDays(gen.Next(range));
 
-                    if (AviableWorkingDaysOfWeekWithoutWeekends.Contains(startDate.DayOfWeek.ToString()))
+                    if (workingDaysOfWeek.Contains(startDate.DayOfWeek.ToString()))
                     {
                         string[] vacationSteps = { "7", "14" };
                         var vacIndex = gen.Next(vacationSteps.Length);
@@ -62,38 +57,37 @@ namespace PracticTask1
                         }
 
                         // Проверка условий по отпуску
-                        var CanCreateVacation = false;
+                        var canCreateVacation = false;
                         var existStart = false;
                         var existEnd = false;
-                        if (!Vacations.Any(element => element >= startDate && element <= endDate))
+                        if (!vacations.Any(element => element >= startDate && element <= endDate))
                         {
-                            if (!Vacations.Any(element => element.AddDays(3) >= startDate && element.AddDays(3) <= endDate))
+                            if (!vacations.Any(element => element.AddDays(3) >= startDate && element.AddDays(3) <= endDate))
                             {
                                 existStart = dateList.Any(element => element.AddMonths(1) >= startDate && element.AddMonths(1) >= endDate);
                                 existEnd = dateList.Any(element => element.AddMonths(-1) <= startDate && element.AddMonths(-1) <= endDate);
                                 if (!existStart || !existEnd)
-                                    CanCreateVacation = true;
+                                    canCreateVacation = true;
                             }
                         }
 
-                        if (CanCreateVacation)
+                        if (canCreateVacation)
                         {
                             for (var dt = startDate; dt < endDate; dt = dt.AddDays(1))
                             {
-                                Vacations.Add(dt);
+                                vacations.Add(dt);
                                 dateList.Add(dt);
                             }
-                            AllVacationCount++;
                             vacationCount -= difference;
                         }
                     }
                 }
             }
-            foreach (var VacationList in VacationDictionary)
+            foreach (var vacationList in vacationDictionary)
             {
-                SetDateList = VacationList.Value;
-                Console.WriteLine("Дни отпуска " + VacationList.Key + " : ");
-                for (int i = 0; i < SetDateList.Count; i++) { Console.WriteLine(SetDateList[i]); }
+                var setDateList = vacationList.Value;
+                Console.WriteLine("Дни отпуска " + vacationList.Key + " : ");
+                for (int i = 0; i < setDateList.Count; i++) { Console.WriteLine(setDateList[i]); }
             }
             Console.ReadKey();
         }
