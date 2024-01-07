@@ -4,9 +4,9 @@ using System.Linq;
 
 namespace PracticTask1
 {
-    class Program
+    internal class Program
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             var vacationDictionary = new Dictionary<string, List<DateTime>>()
             {
@@ -17,8 +17,6 @@ namespace PracticTask1
                 ["Павлов Павел Павлович"] = new(),
                 ["Георгиев Георг Георгиевич"] = new()
             };
-            var workingDaysOfWeek 
-                = new List<string>() { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday" };
             // Список отпусков сотрудников
             var vacations = new List<DateTime>();
             foreach (var VacationList in vacationDictionary)
@@ -33,7 +31,7 @@ namespace PracticTask1
                     int range = (end - start).Days;
                     var startDate = start.AddDays(gen.Next(range));
 
-                    if (workingDaysOfWeek.Contains(startDate.DayOfWeek.ToString()))
+                    if (IsWorkingDay(startDate.DayOfWeek))
                     {
                         int[] vacationSteps = { 7, 14 };
                         var minVacationLength = vacationSteps.Min();
@@ -43,22 +41,7 @@ namespace PracticTask1
 
                         var endDate = startDate.AddDays(vacationLength);
 
-                        // Проверка условий по отпуску
-                        var canCreateVacation = false;
-                        var existStart = false;
-                        var existEnd = false;
-                        if (!vacations.Any(element => element >= startDate && element <= endDate))
-                        {
-                            if (!vacations.Any(element => element.AddDays(3) >= startDate && element.AddDays(3) <= endDate))
-                            {
-                                existStart = dateList.Any(element => element.AddMonths(1) >= startDate && element.AddMonths(1) >= endDate);
-                                existEnd = dateList.Any(element => element.AddMonths(-1) <= startDate && element.AddMonths(-1) <= endDate);
-                                if (!existStart || !existEnd)
-                                    canCreateVacation = true;
-                            }
-                        }
-
-                        if (canCreateVacation)
+                        if (CanCreateVacation(startDate, endDate, dateList, vacations))
                         {
                             for (var dt = startDate; dt < endDate; dt = dt.AddDays(1))
                             {
@@ -77,6 +60,43 @@ namespace PracticTask1
                 for (int i = 0; i < setDateList.Count; i++) { Console.WriteLine(setDateList[i]); }
             }
             Console.ReadKey();
+        }
+
+        private static bool CanCreateVacation(
+                DateTime startDate, DateTime endDate,
+                List<DateTime> employeeVacationDays,
+                List<DateTime> allEmployeesVacationDays)
+        {
+            var existStart = false;
+            var existEnd = false;
+            if (!allEmployeesVacationDays
+                .Any(element => element >= startDate && element <= endDate))
+            {
+                if (!allEmployeesVacationDays
+                    .Any(element => element.AddDays(3) >= startDate && element.AddDays(3) <= endDate))
+                {
+                    existStart = employeeVacationDays
+                        .Any(element => element.AddMonths(1) >= startDate && element.AddMonths(1) >= endDate);
+                    existEnd = employeeVacationDays
+                        .Any(element => element.AddMonths(-1) <= startDate && element.AddMonths(-1) <= endDate);
+                    if (!existStart || !existEnd)
+                        return true;
+                }
+            }
+            return false;
+        }
+
+        private static bool IsWorkingDay(DayOfWeek dayOfWeek)
+        {
+            var workingDaysOfWeek = new HashSet<DayOfWeek>()
+            {
+                DayOfWeek.Monday,
+                DayOfWeek.Tuesday,
+                DayOfWeek.Wednesday,
+                DayOfWeek.Thursday,
+                DayOfWeek.Friday
+            };
+            return workingDaysOfWeek.Contains(dayOfWeek);
         }
     }
 }
