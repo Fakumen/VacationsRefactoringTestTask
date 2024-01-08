@@ -19,45 +19,12 @@ namespace VacationsRefactoringTestTask
                 "Георгиев Георг Георгиевич"
             };
             var year = DateTime.Today.Year;
-            var vacationRules = new VacationRules();
+            var vacationRules = new VacationRules() as IVacationRules;
 
-            //Helper variables
-            var gen = new Random();
-            var firstDayOfYear = new DateTime(year, 1, 1);
-            var daysInYear = DateTime.IsLeapYear(year) ? 366 : 365;
-            var vacationDurations = vacationRules.AvailableVacationDurationsInDays;
-            var minVacationDuration = vacationDurations.Min();
+            var distributor = new RandomVacationsDistributor() as IVacationsDistributor;
+            var vacationsByEmployees = distributor.DistributeVacations(
+                employeesNames, vacationRules, year);
 
-            var vacationsByEmployees = employeesNames
-                .ToDictionary(e => e, e => new List<DatedTimeSpan>());
-            var allVacations = new List<DatedTimeSpan>();
-
-            foreach (var employee in vacationsByEmployees.Keys)
-            {
-                var employeeVacations = vacationsByEmployees[employee];
-                var vacationDaysLeft = vacationRules.VacationDaysPerYear;
-                while (vacationDaysLeft > 0)
-                {
-                    var startDate = firstDayOfYear.AddDays(gen.Next(daysInYear - 1));
-
-                    if (vacationRules.IsWorkingDay(startDate.DayOfWeek))
-                    {
-                        var vacationDuration = vacationDaysLeft <= minVacationDuration
-                            ? minVacationDuration
-                            : vacationDurations[gen.Next(vacationDurations.Count)];
-
-                        var endDate = startDate.AddDays(vacationDuration);
-                        var interval = new DatedTimeSpan(startDate, endDate);
-
-                        if (vacationRules.CanCreateVacation(interval, employeeVacations, allVacations))
-                        {
-                            allVacations.Add(interval);
-                            employeeVacations.Add(interval);
-                            vacationDaysLeft -= vacationDuration;
-                        }
-                    }
-                }
-            }
             foreach (var employee in vacationsByEmployees.Keys)
             {
                 Console.WriteLine($"Дни отпуска {employee} : ");
