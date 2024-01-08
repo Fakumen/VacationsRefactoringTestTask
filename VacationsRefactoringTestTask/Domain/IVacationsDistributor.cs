@@ -9,15 +9,15 @@ namespace VacationsRefactoringTestTask.Domain
         /// Pre-checks if distribution according to rules even possible
         /// </summary>
         public bool CanDistributeVacations(
-            IEnumerable<string> employees,
+            IEnumerable<Employee> employees,
             IVacationRules vacationRules,
             int overYear);
 
         /// <summary>
         /// Distributes vacations over employees according to vacationRules
         /// </summary>
-        public IReadOnlyDictionary<string, List<DatedTimeSpan>> DistributeVacations(
-            IEnumerable<string> employees,
+        public IReadOnlyDictionary<Employee, List<DatedTimeSpan>> DistributeVacations(
+            IEnumerable<Employee> employees,
             IVacationRules vacationRules,
             int overYear);
     }

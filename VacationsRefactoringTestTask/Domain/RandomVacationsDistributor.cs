@@ -8,7 +8,7 @@ namespace VacationsRefactoringTestTask.Domain
     public class RandomVacationsDistributor : IVacationsDistributor
     {
         public bool CanDistributeVacations(
-            IEnumerable<string> employees,
+            IEnumerable<Employee> employees,
             IVacationRules vacationRules,
             int overYear)
         {
@@ -16,8 +16,8 @@ namespace VacationsRefactoringTestTask.Domain
             return employees.Count() * vacationRules.VacationDaysPerYear <= GetDaysInYear(overYear);
         }
 
-        public IReadOnlyDictionary<string, List<DatedTimeSpan>> DistributeVacations(
-            IEnumerable<string> employees,
+        public IReadOnlyDictionary<Employee, List<DatedTimeSpan>> DistributeVacations(
+            IEnumerable<Employee> employees,
             IVacationRules vacationRules,
             int overYear)
         {

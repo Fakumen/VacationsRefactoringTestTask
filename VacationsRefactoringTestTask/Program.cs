@@ -18,13 +18,20 @@ namespace VacationsRefactoringTestTask
                 "Павлов Павел Павлович",
                 "Георгиев Георг Георгиевич"
             };
+            var employees = new List<Employee>();
+            for (var i = 0; i < employeesNames.Count; i++)
+                employees.Add(new Employee(i, employeesNames[i]));
             var year = DateTime.Today.Year;
+
+            //Dependencies
             var vacationRules = new VacationRules() as IVacationRules;
-
             var distributor = new RandomVacationsDistributor() as IVacationsDistributor;
-            var vacationsByEmployees = distributor.DistributeVacations(
-                employeesNames, vacationRules, year);
 
+            //Distribution
+            var vacationsByEmployees = distributor.DistributeVacations(
+                employees, vacationRules, year);
+
+            //Output
             foreach (var employee in vacationsByEmployees.Keys)
             {
                 Console.WriteLine($"Дни отпуска {employee} : ");
