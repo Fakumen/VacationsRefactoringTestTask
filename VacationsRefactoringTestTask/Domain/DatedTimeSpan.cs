@@ -3,9 +3,9 @@ using System.Collections.Generic;
 
 namespace VacationsRefactoringTestTask
 {
-    public readonly struct DateInterval
+    public readonly struct DatedTimeSpan
     {
-        public DateInterval(DateTime start, DateTime end) : this()
+        public DatedTimeSpan(DateTime start, DateTime end) : this()
         {
             Start = start;
             End = end;
@@ -19,7 +19,7 @@ namespace VacationsRefactoringTestTask
         public bool Contains(DateTime date)
             => Start <= date && date <= End;
 
-        public bool Intersects(DateInterval interval, bool intersectOnBorder)
+        public bool Intersects(DatedTimeSpan interval, bool intersectOnBorder)
         {
             var min1 = GetMin(Start, End);
             var min2 = GetMin(interval.Start, interval.End);
