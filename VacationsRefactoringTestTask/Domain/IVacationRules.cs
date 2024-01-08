@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using VacationsRefactoringTestTask.Infrastructure;
 
-namespace VacationsRefactoringTestTask
+namespace VacationsRefactoringTestTask.Domain
 {
     public interface IVacationRules
     {

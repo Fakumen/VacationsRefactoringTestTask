@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace VacationsRefactoringTestTask
+namespace VacationsRefactoringTestTask.Infrastructure
 {
     public readonly struct DatedTimeSpan
     {
@@ -28,7 +28,7 @@ namespace VacationsRefactoringTestTask
 
             if (intersectOnBorder)
                 return !(max1 < min2 || max2 < min1);
-            else 
+            else
                 return !(max1 <= min2 || max2 <= min1);
         }
 

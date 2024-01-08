@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
+using VacationsRefactoringTestTask.Infrastructure;
 
-namespace VacationsRefactoringTestTask
+namespace VacationsRefactoringTestTask.Domain
 {
     public interface IVacationsDistributor
     {
